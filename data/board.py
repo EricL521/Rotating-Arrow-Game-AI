@@ -10,10 +10,15 @@ class Board:
 			for x in range(dimensions[1]):
 				self.board[y].append(0)
 	
-	# spin the arrow at the given location
+	# simulates a click at location, spins all arrows around it, and itself
 	def spin(self, location, direction):
 		[x, y] = location
-		self.board[y][x] += direction
+		for i in range(-1, 2):
+			for j in range(-1, 2):
+				if x + i < 0 or x + i >= self.dimensions[0] or y + j < 0 or y + j >= self.dimensions[1]:
+					continue # don't spin out of bounds
+				self.board[y + j][x + i] += direction
+				self.board[y + j][x + i] %= 4
 	# takes in an array the same size as the board and spins the arrows
 	def spin_array(self, array):
 		for y in range(self.dimensions[0]):

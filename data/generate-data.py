@@ -6,10 +6,15 @@ import numpy as np
 import yaml
 from board import Board
 
-NUMPOINTS = 100000
-DIRECTORY = "data"
-FILENAME_X = "x.yaml"
-FILENAME_Y = "y.yaml"
+# load config
+DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+
+config_file = open(os.path.join(DIRECTORY, "config.yaml"), "r")
+config = yaml.load(config_file, Loader=yaml.Loader)
+
+NUMPOINTS = config["num_points"]
+FILENAME_X = config["file_name_x"]
+FILENAME_Y = config["file_name_y"]
 
 # generates a randomized array of dim[x, y]
 def get_random_array(dim):
@@ -27,17 +32,12 @@ y_data = []
 for i in range(NUMPOINTS):
 	print(i)
 	spin = get_random_array(board.dimensions)
-	board.spin_array(-1 * spin) # spin in reverse
+	board.spin_array(-1 * spin) # spin in reverse, so that the array is the solution
 	x_data.append( copy.deepcopy(board.board) )
 	y_data.append(spin)
 	board.reset()
 
 # write data to file
-def write_data(data, path):
-	stream = open(path, 'w')
-	print("writing to " + path)
-	yaml.dump(data, stream)
-
 os.makedirs(DIRECTORY, exist_ok=True)
-write_data(x_data, os.path.join(DIRECTORY, FILENAME_X))
-write_data(y_data, os.path.join(DIRECTORY, FILENAME_Y))
+np.save(os.path.join(DIRECTORY, FILENAME_X), x_data)
+np.save(os.path.join(DIRECTORY, FILENAME_Y), y_data)

@@ -1,4 +1,4 @@
 __pycache__
 
-data/x.yaml
-data/y.yaml
+data/x.npy
+data/y.npy
