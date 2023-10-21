@@ -32,8 +32,6 @@ for i in range(NUMPOINTS):
 	y_data.append(spin)
 	board.reset()
 
-print(x_data)
-
 # write data to file
 def write_data(data, path):
 	stream = open(path, 'w')
