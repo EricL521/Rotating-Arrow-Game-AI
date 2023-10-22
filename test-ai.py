@@ -26,5 +26,7 @@ def custom_accuracy(y_true, y_pred):
 model = keras.models.load_model(os.path.join(MODEL_DIRECTORY, "model.keras"), custom_objects={"custom_accuracy": custom_accuracy})
 
 # test ai
-print(y_train)
-print(model.predict(x_train))
+y_pred = model.predict(x_train)
+# round y_pred and calculate proportion of correct predictions
+accuracy = ops.equal(ops.round(y_pred), y_train).mean()
+print("Accuracy: ", accuracy)
