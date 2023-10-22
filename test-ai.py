@@ -15,7 +15,7 @@ def custom_accuracy(y_true, y_pred):
 model = keras.models.load_model(MODEL_PATH, custom_objects={"custom_accuracy": custom_accuracy})
 print("model loaded")
 
-def update_solution(*args):
+def update_solution(*_):
 	board = np.array(click_board.board)
 	board = np.expand_dims(board, 0)
 	# predict
@@ -37,7 +37,7 @@ bottom_frame.pack(side=tkinter.BOTTOM)
 # ===== create solved label =====
 solved_label = tkinter.Label(bottom_frame, text="Solved!", font=("Helvetica", 20), pady=10)
 solved_label.pack(side=tkinter.TOP)
-def update_solved_label(*args):
+def update_solved_label(*_):
 	if click_board.is_solved():
 		solved_label.config(text="Solved!")
 	else:
@@ -74,8 +74,9 @@ click_board = UIBoard([4, 4], left_board_frame, BOARD_SIZE, view_only=False,
 
 right_frame, right_board_frame = create_board_frame(root, "Solution (click to apply)", BOARD_SIZE, tkinter.RIGHT)
 def apply_solution(location, value):
-	click_board.spin(location, value)
-	update_solution()
+	if value != 0:
+		click_board.spin(location, value)
+		update_solution()
 solution_board = UIBoard([4, 4], right_board_frame, BOARD_SIZE, display_strings=["0", "1", "2", "3"], view_only=True,
 								on_click=[apply_solution, update_solved_label])
 
