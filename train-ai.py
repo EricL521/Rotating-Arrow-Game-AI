@@ -46,7 +46,7 @@ else:
 		keras.layers.Reshape((4, 4)),
 		keras.layers.Rescaling(scale=4.0),
 	])
-	learning_rate = 0.1
+	learning_rate = 0.2
 
 # ===== compile model =====
 model.compile(
@@ -59,17 +59,20 @@ model.summary()
 model.evaluate(x_train, y_train, verbose=2)
 
 # ===== backup model before training =====
-print("Saving model")
-model.save("model-backup.keras")
+print("Backing up model")
+model.save(os.path.join(MODEL_DIRECTORY, "old-model.keras"))
 
 # ===== train model =====
 callbacks = [
     keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODEL_DIRECTORY, "model_at_epoch_{epoch}.keras")),
+	keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODEL_DIRECTORY, "best_model.keras"), save_best_only=True, verbose=1),
 	keras.callbacks.ReduceLROnPlateau(patience=10, factor=0.5, min_lr=0.000001, verbose=1),
     keras.callbacks.EarlyStopping(patience=100),
 ]
 
-batch_size = 128
+# change batch_size to be smaller if model starts plateauing
+# I started it at 1024
+batch_size = 32 
 epochs = 100000
 history = model.fit(
 	x_train, y_train,
