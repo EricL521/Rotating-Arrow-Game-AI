@@ -27,9 +27,9 @@ def update_solution(*_):
 root = tkinter.Tk()
 root.title("Arrow AI")
 
-BOARD_SIZE = 400
-root.geometry(f"{BOARD_SIZE*2}x{BOARD_SIZE + 200}")
-root.minsize(BOARD_SIZE*2, BOARD_SIZE + 200)
+BOARD_SIZE = 300
+root.geometry(f"{(50+BOARD_SIZE)*2}x{BOARD_SIZE + 200}")
+root.minsize(((10+BOARD_SIZE)*2), BOARD_SIZE + 200)
 
 # ===== create Bottom Frame =====
 bottom_frame = tkinter.Frame(root, width=BOARD_SIZE*2, height=200)
@@ -62,14 +62,14 @@ scramble_button.pack(side=tkinter.LEFT)
 
 # ===== create boards =====
 def create_board_frame(root, title, board_size, side):
-	frame = tkinter.Frame(root, width=1, height=1,
-					   highlightbackground="black", highlightcolor="black", highlightthickness=1)
+	frame = tkinter.Frame(root, width=1, height=1, borderwidth=10)
 	frame.pack(side=side, fill='both', expand=True)
 	frame.columnconfigure(0, weight=1)
 	frame.rowconfigure(1, weight=1)
 	label = tkinter.Label(frame, text=title, font=("Helvetica", 20))
 	label.grid(row=0, column=0)
-	board_frame = tkinter.Frame(frame, width=board_size, height=board_size)
+	board_frame = tkinter.Frame(frame, width=board_size, height=board_size,
+							 highlightbackground="black", highlightcolor="black", highlightthickness=1)
 	board_frame.grid(row=1, column=0, sticky="nesw")
 	return frame, board_frame
 
