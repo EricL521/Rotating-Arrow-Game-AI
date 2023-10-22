@@ -4,6 +4,7 @@ import yaml
 
 os.environ["KERAS_BACKEND"] = "jax"
 import keras_core as keras
+from keras_core import ops
 
 # load data config
 DATA_DIRECTORY = "data"
@@ -19,7 +20,10 @@ y_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_Y))
 
 # load ai
 MODEL_DIRECTORY = "model"
-model = keras.models.load_model(os.path.join(MODEL_DIRECTORY, "model.keras"))
+def custom_accuracy(y_true, y_pred):
+	# round y_pred and calculate proportion of correct predictions
+	return ops.equal(ops.round(y_pred), y_true).mean()
+model = keras.models.load_model(os.path.join(MODEL_DIRECTORY, "model.keras"), custom_objects={"custom_accuracy": custom_accuracy})
 
 # test ai
 print(y_train)

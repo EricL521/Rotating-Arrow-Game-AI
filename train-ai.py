@@ -34,7 +34,7 @@ if os.path.exists(os.path.join(MODEL_DIRECTORY, "model.keras")):
 		os.path.join(MODEL_DIRECTORY, "model.keras"), 
 		custom_objects={"custom_accuracy": custom_accuracy}
 	)
-	learning_rate = 0.05
+	learning_rate = 0.1
 else:
 	print("Creating model")
 	model = keras.Sequential([
@@ -58,6 +58,10 @@ model.compile(
 model.summary()
 model.evaluate(x_train, y_train, verbose=2)
 
+# save model before training
+print("Saving model")
+model.save("model.keras")
+
 # train model
 callbacks = [
     keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODEL_DIRECTORY, "model_at_epoch_{epoch}.keras")),
@@ -65,7 +69,7 @@ callbacks = [
     keras.callbacks.EarlyStopping(patience=100),
 ]
 
-batch_size = 1024
+batch_size = 128
 epochs = 100000
 history = model.fit(
 	x_train, y_train,
