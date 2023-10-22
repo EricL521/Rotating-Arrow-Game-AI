@@ -66,7 +66,7 @@ callbacks = [
 ]
 
 batch_size = 1024
-epochs = 10000
+epochs = 100000
 history = model.fit(
 	x_train, y_train,
 	validation_split=0.2,
