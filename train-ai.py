@@ -5,6 +5,7 @@ import yaml
 
 os.environ["KERAS_BACKEND"] = "jax"
 import keras_core as keras
+from keras_core import ops
 
 # load data config
 DATA_DIRECTORY = "data"
@@ -22,37 +23,50 @@ print("x_train.shape:", x_train.shape)
 print("y_train.shape:", y_train.shape)
 
 # create/load model
+def custom_accuracy(y_true, y_pred):
+	# round y_pred and calculate proportion of correct predictions
+	return ops.equal(ops.round(y_pred), y_true).mean()
+
 MODEL_DIRECTORY = "model"
 if os.path.exists(os.path.join(MODEL_DIRECTORY, "model.keras")):
 	print("Loading model")
-	model = keras.models.load_model(os.path.join(MODEL_DIRECTORY, "model.keras"))
+	model = keras.models.load_model(
+		os.path.join(MODEL_DIRECTORY, "model.keras"), 
+		custom_objects={"custom_accuracy": custom_accuracy}
+	)
+	learning_rate = 0.05
 else:
 	print("Creating model")
 	model = keras.Sequential([
 		keras.layers.Input(shape=(4, 4)),
+		keras.layers.Rescaling(scale=1.0/4.0),
 		keras.layers.Flatten(),
-		keras.layers.Dense(64, activation="relu"),
+		keras.layers.Dense(512, activation="relu"),
 		keras.layers.Dense(64, activation="relu"),
 		keras.layers.Dense(16, activation="relu"),
 		keras.layers.Reshape((4, 4)),
+		keras.layers.Rescaling(scale=4.0),
 	])
+	learning_rate = 0.1
+	
+model.compile(
+	optimizer=keras.optimizers.SGD(learning_rate=learning_rate), 
+	loss=keras.losses.MeanSquaredError(), 
+	metrics=[custom_accuracy]
+)
 
 model.summary()
-
-model.compile(
-	optimizer=keras.optimizers.SGD(momentum=0.8, learning_rate=0.02), 
-	loss=keras.losses.MeanSquaredError(), 
-	metrics=["accuracy"]
-)
+model.evaluate(x_train, y_train, verbose=2)
 
 # train model
 callbacks = [
     keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODEL_DIRECTORY, "model_at_epoch_{epoch}.keras")),
-    keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=20),
+	keras.callbacks.ReduceLROnPlateau(patience=10, factor=0.5, min_lr=0.000001, verbose=1),
+    keras.callbacks.EarlyStopping(patience=100),
 ]
 
-batch_size = 20
-epochs = 1000
+batch_size = 1024
+epochs = 10000
 history = model.fit(
 	x_train, y_train,
 	validation_split=0.2,
@@ -62,14 +76,15 @@ history = model.fit(
 )
 
 # save model
+print("Saving model")
 model.save(os.path.join(MODEL_DIRECTORY, "model.keras"))
 
 
 # show results
 history_dict = history.history
 
-acc = history_dict['accuracy']
-val_acc = history_dict['val_accuracy']
+acc = history_dict['mean_metric_wrapper']
+val_acc = history_dict['val_mean_metric_wrapper']
 loss = history_dict['loss']
 val_loss = history_dict['val_loss']
 
