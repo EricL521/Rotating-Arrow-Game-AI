@@ -7,22 +7,21 @@ os.environ["KERAS_BACKEND"] = "jax"
 import keras_core as keras
 from keras_core import ops
 
-# load data config
+# ===== load data config =====
 DATA_DIRECTORY = "data"
 config = yaml.load(open( os.path.join(DATA_DIRECTORY, "config.yaml") , "r"), Loader=yaml.Loader)
 
 FILENAME_X = config["file_name_x"]
 FILENAME_Y = config["file_name_y"]
 
-# load data
+# ===== load data =====
 print("Loading data")
 x_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_X))
 y_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_Y))
-# process data
 print("x_train.shape:", x_train.shape)
 print("y_train.shape:", y_train.shape)
 
-# create/load model
+# ===== create/load model =====
 def custom_accuracy(y_true, y_pred):
 	# round y_pred and calculate proportion of correct predictions
 	return ops.equal(ops.round(y_pred), y_true).mean()
@@ -48,7 +47,8 @@ else:
 		keras.layers.Rescaling(scale=4.0),
 	])
 	learning_rate = 0.1
-	
+
+# ===== compile model =====
 model.compile(
 	optimizer=keras.optimizers.SGD(learning_rate=learning_rate), 
 	loss=keras.losses.MeanSquaredError(), 
@@ -58,11 +58,11 @@ model.compile(
 model.summary()
 model.evaluate(x_train, y_train, verbose=2)
 
-# save model before training
+# ===== backup model before training =====
 print("Saving model")
-model.save("model.keras")
+model.save("model-backup.keras")
 
-# train model
+# ===== train model =====
 callbacks = [
     keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODEL_DIRECTORY, "model_at_epoch_{epoch}.keras")),
 	keras.callbacks.ReduceLROnPlateau(patience=10, factor=0.5, min_lr=0.000001, verbose=1),
@@ -79,12 +79,12 @@ history = model.fit(
 	callbacks=callbacks
 )
 
-# save model
+# ===== save model =====
 print("Saving model")
 model.save(os.path.join(MODEL_DIRECTORY, "model.keras"))
 
 
-# show results
+# ===== display results =====
 history_dict = history.history
 
 acc = history_dict['mean_metric_wrapper']

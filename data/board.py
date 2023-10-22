@@ -10,6 +10,13 @@ class Board:
 			for x in range(dimensions[1]):
 				self.board[y].append(0)
 	
+	def is_solved(self):
+		for y in range(self.dimensions[0]):
+			for x in range(self.dimensions[1]):
+				if self.board[y][x] != 0:
+					return False
+		return True
+	
 	# simulates a click at location, spins all arrows around it, and itself
 	def spin(self, location, direction):
 		[x, y] = location
@@ -25,6 +32,9 @@ class Board:
 			for x in range(self.dimensions[1]):
 				self.spin([x, y], array[y][x])
 	
+	def set_board(self, board):
+		self.board = board
+		self.dimensions = (len(board), len(board[0]))
 	def reset(self):
 		for y in range(self.dimensions[0]):
 			for x in range(self.dimensions[1]):
