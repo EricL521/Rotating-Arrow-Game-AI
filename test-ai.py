@@ -28,7 +28,7 @@ root = tkinter.Tk()
 root.title("Arrow AI")
 
 BOARD_SIZE = 300
-root.geometry(f"{(50+BOARD_SIZE)*2}x{BOARD_SIZE + 200}")
+root.geometry(f"{(10+BOARD_SIZE)*2}x{BOARD_SIZE + 200}")
 root.minsize(((10+BOARD_SIZE)*2), BOARD_SIZE + 200)
 
 # ===== create Bottom Frame =====
