@@ -15,6 +15,8 @@ config = yaml.load(config_file, Loader=yaml.Loader)
 NUMPOINTS = config["num_points"]
 FILENAME_X = config["file_name_x"]
 FILENAME_Y = config["file_name_y"]
+X_DIM = config["x_dim"]
+Y_DIM = config["y_dim"]
 
 # generates a randomized array of dim[x, y]
 def get_random_array(dim):
@@ -26,7 +28,7 @@ def get_random_array(dim):
 	return np.array(array)
 
 # create a board and array for storing data
-board = Board([4, 4])
+board = Board([X_DIM, Y_DIM])
 x_data = []
 y_data = []
 for i in range(NUMPOINTS):

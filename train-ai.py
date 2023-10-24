@@ -21,7 +21,7 @@ FILENAME_Y = config["file_name_y"]
 # NOTE: if you notice a difference between val_loss and loss,
 # increase this number
 # I started it at ~10000
-TRAINING_DATA_SIZE = 50000
+TRAINING_DATA_SIZE = 100000
 
 print("Loading data")
 x_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_X))[:TRAINING_DATA_SIZE]
@@ -47,12 +47,12 @@ if os.path.exists(os.path.join(MODEL_DIRECTORY, "model.keras")):
 else:
 	print("Creating model")
 	model = keras.Sequential([
-		keras.layers.Input(shape=(4, 4)),
+		keras.layers.Input(shape=(3, 3)),
 		keras.layers.Flatten(),
-		keras.layers.Dense(512, activation='leaky_relu'),
-		keras.layers.Dense(64, activation='leaky_relu'),
-		keras.layers.Dense(16, activation='leaky_relu'),
-		keras.layers.Reshape((4, 4)),
+		keras.layers.Dense(243, activation='leaky_relu'),
+		keras.layers.Dense(27, activation='leaky_relu'),
+		keras.layers.Dense(9, activation='leaky_relu'),
+		keras.layers.Reshape((3, 3)),
 	])
 	learning_rate = 0.1
 
@@ -87,7 +87,7 @@ callbacks = [
 # training data size and batch size 
 # ex. I increased training size to 50000 and batch size to 128
 # I started it at ~32
-batch_size = 128
+batch_size = 32
 epochs = 10000
 history = model.fit(
 	x_train, y_train,

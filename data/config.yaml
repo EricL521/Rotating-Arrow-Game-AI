@@ -1,4 +1,6 @@
 file_name_x: "x.npy"
 file_name_y: "y.npy"
 
-num_points: 500000
+x_dim: 3
+y_dim: 3
+num_points: 100000
