@@ -28,10 +28,12 @@ def custom_accuracy(y_true, y_pred):
 
 print("Loading model")
 model = keras.models.load_model(
-	os.path.join("", "model.keras"), 
+	os.path.join("", "model - 99.95%.keras"), 
 	custom_objects={"custom_accuracy": custom_accuracy}
 )
+model.summary()
 
 print("Evaluating model")
 model.evaluate(x_train, y_train, verbose=2)
-
+print("Percent correct: ")
+print(100 * ops.mean(ops.equal(ops.round(model(x_train)), y_train)))

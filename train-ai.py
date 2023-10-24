@@ -15,9 +15,17 @@ FILENAME_X = config["file_name_x"]
 FILENAME_Y = config["file_name_y"]
 
 # ===== load data =====
+
+# Increase training data size if model plateaus <=======================================================
+# Decrease batch size first, though, see below
+# NOTE: if you notice a difference between val_loss and loss,
+# increase this number
+# I started it at ~10000
+TRAINING_DATA_SIZE = 10000
+
 print("Loading data")
-x_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_X))
-y_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_Y))
+x_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_X))[:TRAINING_DATA_SIZE]
+y_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_Y))[:TRAINING_DATA_SIZE]
 print("x_train.shape:", x_train.shape)
 print("y_train.shape:", y_train.shape)
 
@@ -33,20 +41,20 @@ if os.path.exists(os.path.join(MODEL_DIRECTORY, "model.keras")):
 		os.path.join(MODEL_DIRECTORY, "model.keras"), 
 		custom_objects={"custom_accuracy": custom_accuracy}
 	)
-	learning_rate = 0.1
+	# the learning rate is relatively high, so it can get out of local minima
+	# it is decreased during runtime by a callback
+	learning_rate = 0.05
 else:
 	print("Creating model")
 	model = keras.Sequential([
 		keras.layers.Input(shape=(4, 4)),
-		keras.layers.Rescaling(scale=1.0/4.0),
 		keras.layers.Flatten(),
-		keras.layers.Dense(512, activation="relu"),
-		keras.layers.Dense(64, activation="relu"),
-		keras.layers.Dense(16, activation="relu"),
+		keras.layers.Dense(512, activation='leaky_relu'),
+		keras.layers.Dense(64, activation='leaky_relu'),
+		keras.layers.Dense(16, activation='leaky_relu'),
 		keras.layers.Reshape((4, 4)),
-		keras.layers.Rescaling(scale=4.0),
 	])
-	learning_rate = 0.2
+	learning_rate = 0.1
 
 # ===== compile model =====
 model.compile(
@@ -60,20 +68,27 @@ model.evaluate(x_train, y_train, verbose=2)
 
 # ===== backup model before training =====
 print("Backing up model")
+# if folder doesn't exist, create it
+if not os.path.exists(MODEL_DIRECTORY):
+	os.makedirs(MODEL_DIRECTORY)
 model.save(os.path.join(MODEL_DIRECTORY, "old-model.keras"))
 
 # ===== train model =====
 callbacks = [
     keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODEL_DIRECTORY, "model_at_epoch_{epoch}.keras")),
 	keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODEL_DIRECTORY, "best_model.keras"), save_best_only=True, verbose=1),
-	keras.callbacks.ReduceLROnPlateau(patience=10, factor=0.5, min_lr=0.000001, verbose=1),
-    keras.callbacks.EarlyStopping(patience=100),
+	keras.callbacks.ReduceLROnPlateau(patience=20, factor=0.5, min_lr=0.000001, verbose=1),
+    keras.callbacks.EarlyStopping(patience=100, min_delta=0.0001),
 ]
 
-# change batch_size to be smaller if model starts plateauing
-# I started it at 1024
-batch_size = 32 
-epochs = 100000
+# halve batch_size if model loss starts <=======================================================
+# plateauing even after multiple restarts
+# once it gets decently small, increase 
+# training data size and batch size 
+# ex. I increased training size to 50000 and batch size to 128
+# I started it at ~32
+batch_size = 32
+epochs = 10000
 history = model.fit(
 	x_train, y_train,
 	validation_split=0.2,
