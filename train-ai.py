@@ -21,7 +21,7 @@ FILENAME_Y = config["file_name_y"]
 # NOTE: if you notice a difference between val_loss and loss,
 # increase this number
 # I started it at ~10000
-TRAINING_DATA_SIZE = 100000
+TRAINING_DATA_SIZE = 50000
 
 print("Loading data")
 x_train = np.load(os.path.join(DATA_DIRECTORY, FILENAME_X))[:TRAINING_DATA_SIZE]
@@ -87,7 +87,7 @@ callbacks = [
 # training data size and batch size 
 # ex. I increased training size to 50000 and batch size to 128
 # I started it at ~32
-batch_size = 32
+batch_size = 64
 epochs = 10000
 history = model.fit(
 	x_train, y_train,

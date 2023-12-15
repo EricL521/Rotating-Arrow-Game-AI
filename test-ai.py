@@ -8,7 +8,7 @@ import keras_core as keras
 from keras_core import ops
 
 # ===== load model =====
-MODEL_PATH = "model - 3x3 - 99.9%.keras"
+MODEL_PATH = "model - 3x3 - 98.8%.keras"
 def custom_accuracy(y_true, y_pred):
 	# round y_pred and calculate proportion of correct predictions
 	return ops.equal(ops.round(y_pred), y_true).mean()

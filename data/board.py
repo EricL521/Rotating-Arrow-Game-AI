@@ -1,4 +1,3 @@
-
 # represents a board of arrows
 class Board:
 	# dimensions is a tuple of (width, height)
