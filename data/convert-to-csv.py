@@ -11,12 +11,15 @@ y_data = np.load('data/y.npy')[:AMOUNT]
 
 # convert data to dataframes
 def create_dataframe(array):
-    df = pd.DataFrame(columns=['a', 'b', 'c'])
+    # create columns depending on size of array
+    row_size = len(array[0][0])
+    columns = ['c' + str(i) for i in range(row_size)]
+    df = pd.DataFrame(columns=columns)
     for board in array:
         for row in board:
             df.loc[len(df)] = row
         # add EMPTY line betwen boards
-        df.loc[len(df)] = ['', '', '']
+        df.loc[len(df)] = ['' for i in range(row_size)]
     return df
 x_df = create_dataframe(x_data)
 y_df = create_dataframe(y_data)
