@@ -28,7 +28,7 @@ def custom_accuracy(y_true, y_pred):
 
 print("Loading model")
 model = keras.models.load_model(
-	os.path.join("", "model - 3x3.keras"), 
+	os.path.join("", "best_model.keras"), 
 	custom_objects={"custom_accuracy": custom_accuracy}
 )
 model.summary()

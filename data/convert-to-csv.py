@@ -2,12 +2,21 @@
 
 import pandas as pd
 import numpy as np
+import yaml
+import os
+
+# load config.yaml
+DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+config_file = open(os.path.join(DIRECTORY, "config.yaml"), "r")
+config = yaml.load(config_file, Loader=yaml.Loader)
+FILENAME_X = config["file_name_x"]
+FILENAME_Y = config["file_name_y"]
 
 # load data from npy files
 # both are AMOUNTx3x3 arrays
 AMOUNT = 100
-x_data = np.load('data/x.npy')[:AMOUNT]
-y_data = np.load('data/y.npy')[:AMOUNT]
+x_data = np.load(os.path.join(DIRECTORY, FILENAME_X))[:AMOUNT]
+y_data = np.load(os.path.join(DIRECTORY, FILENAME_Y))[:AMOUNT]
 
 # convert data to dataframes
 def create_dataframe(array):
@@ -25,5 +34,5 @@ x_df = create_dataframe(x_data)
 y_df = create_dataframe(y_data)
 
 # save to csv
-x_df.to_csv('data/x.csv', index=False, header=False)
-y_df.to_csv('data/y.csv', index=False, header=False)
+x_df.to_csv(os.path.join(DIRECTORY, FILENAME_X.replace('.npy', '.csv')), index=False, header=False)
+y_df.to_csv(os.path.join(DIRECTORY, FILENAME_Y.replace('.npy', '.csv')), index=False, header=False)

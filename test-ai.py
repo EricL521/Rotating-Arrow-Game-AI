@@ -8,7 +8,7 @@ import keras_core as keras
 from keras_core import ops
 
 # ===== load model =====
-MODEL_PATH = "model - 3x3 - 98.8%.keras"
+MODEL_PATH = "./best_model.keras"
 def custom_accuracy(y_true, y_pred):
 	# round y_pred and calculate proportion of correct predictions
 	return ops.equal(ops.round(y_pred), y_true).mean()
@@ -27,6 +27,7 @@ def update_solution(*_):
 root = tkinter.Tk()
 root.title("Arrow AI")
 
+BOARD_DIM = [3, 3]
 BOARD_SIZE = 300
 root.geometry(f"{(10+BOARD_SIZE)*2}x{BOARD_SIZE + 200}")
 root.minsize(((10+BOARD_SIZE)*2), BOARD_SIZE + 200)
@@ -77,7 +78,7 @@ top_frame = tkinter.Frame(root, width=1, height=1, pady=10)
 top_frame.pack(side=tkinter.TOP, fill='both', expand=True)
 
 left_frame, left_board_frame = create_board_frame(top_frame, "Puzzle (click to spin)", BOARD_SIZE, tkinter.LEFT)
-click_board = UIBoard([3, 3], left_board_frame, BOARD_SIZE, view_only=False, 
+click_board = UIBoard(BOARD_DIM, left_board_frame, BOARD_SIZE, view_only=False, 
 							on_click=[update_solution, update_solved_label])
 
 right_frame, right_board_frame = create_board_frame(top_frame, "Solution (click to apply)", BOARD_SIZE, tkinter.RIGHT)
@@ -86,7 +87,7 @@ def apply_solution(location, value):
 		click_board.spin(location, value)
 		update_solution()
 		update_solved_label()
-solution_board = UIBoard([3, 3], right_board_frame, BOARD_SIZE, display_strings=["0", "1", "2", "3"], view_only=True,
+solution_board = UIBoard(BOARD_DIM, right_board_frame, BOARD_SIZE, display_strings=["0", "1", "2", "3"], view_only=True,
 								on_click=[apply_solution, update_solved_label])
 
 # ===== update solution =====
