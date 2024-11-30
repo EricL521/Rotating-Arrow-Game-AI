@@ -1,5 +1,5 @@
 # Rotating-Arrow-Game-AI
-An AI that solves the [Rotating Arrow Game](https://github.com/EricL521/Rotating-Arrow-Game/), using [Keras_Core](https://github.com/keras-team/keras-core)
+An AI that solves the [Rotating Arrow Game](https://github.com/EricL521/Rotating-Arrow-Game/), using [Keras Core](https://github.com/keras-team/keras-core)
 
 ## Setup
 Guide to installing repository and required packages
